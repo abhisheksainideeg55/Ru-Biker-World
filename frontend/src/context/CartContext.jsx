@@ -460,31 +460,19 @@ export const CartProvider = ({ children }) => {
     if (isAuthenticated) {
       try {
         await cartService.clearCart();
-        setItems([]);
-        setCoupon({ code: null, discountAmount: 0 });
-        setSubtotal(0);
-        setDiscount(0);
-        setShipping(0);
-        setTax(0);
-        setGrandTotal(0);
-        showToast('Cart cleared.', 'info');
       } catch (err) {
-        showToast('Failed to clear cart', 'error');
-      } finally {
-        setIsLoading(false);
+        console.warn('Backend clearCart fallback:', err.message);
       }
-    } else {
-      memoryGuestCart = [];
-      setItems([]);
-      setCoupon({ code: null, discountAmount: 0 });
-      setSubtotal(0);
-      setDiscount(0);
-      setShipping(0);
-      setTax(0);
-      setGrandTotal(0);
-      showToast('Cart cleared.', 'info');
-      setIsLoading(false);
     }
+    memoryGuestCart = [];
+    setItems([]);
+    setCoupon({ code: null, discountAmount: 0 });
+    setSubtotal(0);
+    setDiscount(0);
+    setShipping(0);
+    setTax(0);
+    setGrandTotal(0);
+    setIsLoading(false);
   };
 
   /**
