@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { FiCheck, FiInfo, FiX } from 'react-icons/fi';
+import { FiInfo, FiX } from 'react-icons/fi';
 
-const DEFAULT_HELMET_SIZES = [
-  { label: 'S', name: 'Small', cm: '55-56 cm' },
-  { label: 'M', name: 'Medium', cm: '57-58 cm' },
-  { label: 'L', name: 'Large', cm: '59-60 cm' },
-  { label: 'XL', name: 'Extra Large', cm: '61-62 cm' },
-  { label: 'XXL', name: '2X Large', cm: '63-64 cm' },
+const DEFAULT_SIZES = [
+  { label: 'Small', name: 'Small', cm: '55-56 cm' },
+  { label: 'Medium', name: 'Medium', cm: '57-58 cm' },
+  { label: 'Large', name: 'Large', cm: '59-60 cm' },
+  { label: 'Extra Large', name: 'Extra Large', cm: '61-62 cm' },
+  { label: 'Double Extra Large', name: 'Double Extra Large', cm: '63-64 cm' },
 ];
 
 export const ProductSizeSelector = ({
@@ -17,56 +17,56 @@ export const ProductSizeSelector = ({
 }) => {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
 
-  // Normalize sizes into rich objects
+  // Normalize sizes into standard format
   const sizeList = React.useMemo(() => {
     if (Array.isArray(sizes) && sizes.length > 0) {
       return sizes.map((s) => {
         if (typeof s === 'object' && s !== null) return s;
         const str = String(s).trim();
-        const matched = DEFAULT_HELMET_SIZES.find(
-          (d) => d.label.toLowerCase() === str.toLowerCase() || d.name.toLowerCase() === str.toLowerCase() || str.toLowerCase().includes(d.label.toLowerCase())
+        const matched = DEFAULT_SIZES.find(
+          (d) =>
+            d.label.toLowerCase() === str.toLowerCase() ||
+            d.name.toLowerCase() === str.toLowerCase() ||
+            (str.length <= 3 && d.name.toLowerCase().startsWith(str.toLowerCase()))
         );
         if (matched) return matched;
         return { label: str, name: str, cm: '' };
       });
     }
-    return DEFAULT_HELMET_SIZES;
+    return DEFAULT_SIZES.slice(0, 4); // Small, Medium, Large, Extra Large
   }, [sizes]);
 
   const currentSelectedStr = typeof selectedSize === 'object' && selectedSize !== null
-    ? selectedSize.label || selectedSize.name
-    : String(selectedSize || sizeList[1]?.name || 'Medium');
+    ? selectedSize.name || selectedSize.label
+    : String(selectedSize || 'Medium');
 
   return (
     <div className="space-y-3 pt-2">
-      {/* Header & Size Guide Trigger */}
+      {/* Title */}
       <div className="flex items-center justify-between text-xs sm:text-sm">
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-slate-900 tracking-tight">
-            {isHelmet ? 'Select Helmet Size' : 'Select Size'}
-          </span>
-          <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-            {currentSelectedStr}
-          </span>
-        </div>
+        <span className="font-bold text-slate-800 text-sm tracking-tight">
+          Accessory Size
+        </span>
 
         <button
           type="button"
           onClick={() => setShowSizeGuide(true)}
-          className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-amber-600 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-black transition-colors cursor-pointer"
         >
-          <FiInfo className="w-3.5 h-3.5 text-amber-500" />
-          <span className="underline decoration-dotted">Size Guide (cm)</span>
+          <FiInfo className="w-3.5 h-3.5 text-slate-400" />
+          <span className="underline decoration-dotted text-[11px]">Size Guide</span>
         </button>
       </div>
 
       {/* Size Option Pills */}
-      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+      <div className="flex flex-wrap gap-2.5 items-center">
         {sizeList.map((item) => {
           const isSelected =
-            currentSelectedStr.toLowerCase() === item.label.toLowerCase() ||
             currentSelectedStr.toLowerCase() === item.name.toLowerCase() ||
-            currentSelectedStr.toLowerCase().includes(item.label.toLowerCase());
+            currentSelectedStr.toLowerCase() === item.label.toLowerCase() ||
+            currentSelectedStr.toLowerCase().startsWith(item.label.toLowerCase());
+
+          const isExtraLarge = item.label.toLowerCase().includes('extra');
 
           return (
             <button
@@ -74,24 +74,27 @@ export const ProductSizeSelector = ({
               type="button"
               onClick={() => onSelectSize(item.name || item.label)}
               className={`
-                relative py-2.5 px-3 rounded-xl text-center transition-all duration-200 border cursor-pointer select-none active:scale-[0.98]
+                min-h-[44px] px-5 py-2 rounded-lg text-center transition-all duration-150 border cursor-pointer select-none active:scale-[0.98] focus:outline-none
                 ${
                   isSelected
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-amber-500/50'
-                    : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
+                    ? 'bg-black text-white border-black font-bold shadow-xs'
+                    : 'bg-white text-slate-800 border-slate-300 hover:border-black font-medium'
                 }
+                ${isExtraLarge ? 'text-xs' : 'text-xs sm:text-sm'}
               `}
             >
-              {isSelected && (
-                <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-[9px] font-black shadow-xs">
-                  <FiCheck className="w-2.5 h-2.5 stroke-[3]" />
-                </span>
-              )}
-              <div className="text-xs sm:text-sm font-extrabold uppercase">{item.label}</div>
-              {item.cm && (
-                <div className={`text-[10px] mt-0.5 ${isSelected ? 'text-amber-300 font-medium' : 'text-slate-500'}`}>
-                  {item.cm}
+              {item.label === 'Extra Large' ? (
+                <div className="leading-tight text-center">
+                  <div>Extra</div>
+                  <div>Large</div>
                 </div>
+              ) : item.label === 'Double Extra Large' ? (
+                <div className="leading-tight text-center text-[10px]">
+                  <div>Double</div>
+                  <div>Extra Large</div>
+                </div>
+              ) : (
+                item.label
               )}
             </button>
           );
