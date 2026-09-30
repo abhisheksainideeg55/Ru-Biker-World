@@ -1,0 +1,27 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /shop
+Allow: /search
+Allow: /product/
+Allow: /blog
+Allow: /blog/
+Allow: /offers
+Allow: /track-order
+Allow: /terms
+Allow: /privacy
+
+# Disallow private user and transactional paths
+Disallow: /account
+Disallow: /account/
+Disallow: /checkout
+Disallow: /cart
+Disallow: /wishlist
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password/
+Disallow: /order-confirmation/
+
+# Sitemap location
+Sitemap: https://www.motozone.in/sitemap.xml

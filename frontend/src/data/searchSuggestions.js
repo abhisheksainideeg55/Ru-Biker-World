@@ -1,0 +1,35 @@
+export const searchSuggestionsData = {
+  products: [
+    { title: 'Brake Pads (Ceramic & Sintered)', category: 'Brake System', path: '/shop?search=brake+pads' },
+    { title: 'Chain & Sprocket Kit (Rolon / DID)', category: 'Chain & Sprockets', path: '/shop?search=chain+sprocket' },
+    { title: 'LED Auxiliary Fog Lights', category: 'Lighting', path: '/shop?search=fog+lights' },
+    { title: 'Performance Slip-On Exhaust', category: 'Performance', path: '/shop?search=exhaust' },
+    { title: 'Crash Guard with Slider Puck', category: 'Protection', path: '/shop?search=crash+guard' },
+    { title: 'Waterproof Handlebar Mobile Mount', category: 'Bike Essentials', path: '/shop?search=mobile+mount' },
+  ],
+  brands: [
+    { name: 'Royal Enfield', path: '/shop?bike=Royal+Enfield', count: '1,200+ parts' },
+    { name: 'KTM', path: '/shop?bike=KTM', count: '850+ parts' },
+    { name: 'Yamaha', path: '/shop?bike=Yamaha', count: '920+ parts' },
+    { name: 'Bajaj', path: '/shop?bike=Bajaj', count: '1,100+ parts' },
+    { name: 'BMW Motorrad', path: '/shop?bike=BMW', count: '450+ parts' },
+    { name: 'Kawasaki', path: '/shop?bike=Kawasaki', count: '540+ parts' },
+  ],
+  categories: [
+    { name: 'Brake System', path: '/shop?category=brake-system' },
+    { name: 'Electrical & Lighting', path: '/shop?category=electrical' },
+    { name: 'Riding Gear & Helmets', path: '/shop?category=riding-gear' },
+    { name: 'Engine & Transmission', path: '/shop?category=engine-parts' },
+    { name: 'Touring & Luggage', path: '/shop?category=touring' },
+  ],
+  trendingKeywords: [
+    'Brake Pads',
+    'KTM Duke Exhaust',
+    'Royal Enfield Sump Guard',
+    'Chain Sprocket',
+    'Visor R15',
+    'Mobile Charger',
+    'Riding Gloves',
+    'Synthetic Engine Oil',
+  ],
+};

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="100%" height="100%">
+  <rect width="300" height="200" fill="#ffffff"/>
+  <g transform="translate(150, 75)">
+    <!-- Ducati Red Shield Badge -->
+    <path d="M0 -42 L38 -32 C38 -5 26 22 0 36 C-26 22 -38 -5 -38 -32 Z" fill="#D32F2F" stroke="#900C12" stroke-width="2"/>
+    <path d="M-30 -22 L30 -22 L15 15 L-15 15 Z" fill="#FFFFFF" opacity="0.2"/>
+    <text x="0" y="2" text-anchor="middle" fill="#FFFFFF" font-family="'Arial Black', sans-serif" font-weight="900" font-style="italic" font-size="16" letter-spacing="1">DUCATI</text>
+    <text x="0" y="75" text-anchor="middle" fill="#D32F2F" font-family="'Arial Black', sans-serif" font-weight="900" font-style="italic" font-size="28" letter-spacing="2">DUCATI</text>
+  </g>
+</svg>

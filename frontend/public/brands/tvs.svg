@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="100%" height="100%">
+  <rect width="300" height="200" fill="#ffffff"/>
+  <g transform="translate(150, 95)">
+    <!-- Red Jumping Horse / Pegasus -->
+    <path d="M-45 -40 C-20 -55 10 -45 35 -30 C15 -25 5 -15 -5 -5 C10 -10 25 -10 38 -5 C15 5 0 20 -15 35 C-12 18 -10 0 -22 -20 C-32 -30 -40 -35 -45 -40 Z" fill="#D32F2F"/>
+    <!-- Blue TVS Text -->
+    <text x="0" y="45" text-anchor="middle" fill="#003399" font-family="'Arial Black', sans-serif" font-weight="900" font-style="italic" font-size="56" letter-spacing="3">TVS</text>
+  </g>
+</svg>

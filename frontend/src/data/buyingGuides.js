@@ -1,0 +1,38 @@
+export const buyingGuides = [
+  {
+    id: 'guide-001',
+    category: 'Braking Systems',
+    readTime: '4 min read',
+    title: 'How to Choose the Right Brake Pads: Sintered vs Ceramic vs Organic',
+    description: 'Learn the critical differences in friction coefficient, heat fade resistance, and rotor wear to pick the safest pads for track and highway touring.',
+    slug: 'how-to-choose-brake-pads',
+    tag: 'Maintenance',
+  },
+  {
+    id: 'guide-002',
+    category: 'Drivetrain',
+    readTime: '5 min read',
+    title: 'How to Select the Correct Chain & Sprocket Kit for Your Engine Power',
+    description: 'Understand 520 vs 525 pitch, brass corrosion resistance, O-ring vs X-ring seal longevity, and how changing tooth ratio alters acceleration.',
+    slug: 'how-to-select-chain-sprocket-kit',
+    tag: 'Performance',
+  },
+  {
+    id: 'guide-003',
+    category: 'Spares Tech',
+    readTime: '3 min read',
+    title: 'OEM vs Aftermarket Motorcycle Parts: Balancing Quality, Cost & Warranty',
+    description: 'When should you strictly buy factory OEM components versus high-performance aftermarket upgrades like CNC levers and braided brake lines.',
+    slug: 'oem-vs-aftermarket-parts-guide',
+    tag: 'Buyer Guide',
+  },
+  {
+    id: 'guide-004',
+    category: 'Touring & Utility',
+    readTime: '4 min read',
+    title: 'How to Choose Motorcycle Luggage: Saddlebags, Top Boxes & Tank Bags',
+    description: 'Weight distribution guidelines, quick-release locking racks, and weatherproofing tips to keep your touring gear safe over thousands of kilometers.',
+    slug: 'choosing-motorcycle-luggage-guide',
+    tag: 'Touring',
+  },
+];

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120" width="300" height="120">
+  <rect width="100%" height="100%" fill="transparent"/>
+  <g transform="translate(20, 20)">
+    <path d="M8 44 Q28 14 56 22 Q40 32 30 52 Z" fill="#0284c7"/>
+    <circle cx="48" cy="22" r="3" fill="#ffffff"/>
+    <text x="68" y="42" font-family="Arial Black, sans-serif" font-size="26" font-weight="900" fill="#0f172a" letter-spacing="1">AUTOBIRD</text>
+    <text x="70" y="58" font-family="sans-serif" font-size="8.5" font-weight="800" fill="#0284c7" letter-spacing="3.5">PREMIUM AUTO GEAR</text>
+  </g>
+</svg>

@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  /* Design System Buttons */
+  .btn-primary {
+    @apply inline-flex items-center justify-center font-semibold px-5 py-2.5 rounded-lg bg-brand-600 text-white hover:bg-brand-700 active:scale-[0.98] transition-all duration-200 shadow-sm hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center font-semibold px-5 py-2.5 rounded-lg bg-surface-900 text-white hover:bg-surface-800 active:scale-[0.98] transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-700 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center font-semibold px-5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 hover:border-slate-400 active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center font-semibold px-5 py-2.5 rounded-lg bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100;
+  }
+
+  /* Card Component */
+  .card-premium {
+    @apply bg-white rounded-xl border border-slate-200/80 shadow-card hover:shadow-elevated transition-shadow duration-300;
+  }
+
+  /* Form Input Component */
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors duration-200 text-sm;
+  }
+
+  /* Badge Component */
+  .badge-primary {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-100 text-brand-800 border border-brand-200;
+  }
+
+  .badge-dark {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-900 text-white;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0 !important;
+  height: 0 !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Linear Brand Marquee Animation */
+@keyframes marquee-linear {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee-linear {
+  display: flex;
+  width: max-content;
+  animation: marquee-linear 32s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-linear:hover {
+  animation-play-state: paused;
+}
+

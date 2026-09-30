@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120" width="300" height="120">
+  <rect width="100%" height="100%" fill="transparent"/>
+  <g transform="translate(25, 22)">
+    <rect x="0" y="8" width="60" height="52" rx="8" fill="#dc2626"/>
+    <text x="30" y="45" font-family="Impact, Arial, sans-serif" font-size="34" font-weight="900" fill="#ffffff" text-anchor="middle">N</text>
+    <path d="M48 16 L56 24 L48 32" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <text x="72" y="46" font-family="Arial Black, Impact, sans-serif" font-size="36" font-weight="900" fill="#0f172a" letter-spacing="2">GAGE</text>
+    <text x="74" y="62" font-family="sans-serif" font-size="9" font-weight="800" fill="#dc2626" letter-spacing="3">RACING POWER TECH</text>
+  </g>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="100%" height="100%">
+  <rect width="300" height="200" fill="#ffffff"/>
+  <g transform="translate(40, 30)">
+    <!-- Bajaj Flying Hexagon / Wings Symbol -->
+    <path d="M55 20 L25 55 L55 90 L75 70 L55 55 L75 40 Z" fill="#00529B"/>
+    <path d="M80 20 L110 55 L80 90 L60 70 L80 55 L60 40 Z" fill="#00529B"/>
+    <!-- BAJAJ Text -->
+    <text x="110" y="130" text-anchor="middle" fill="#00529B" font-family="'Arial Black', 'Inter', sans-serif" font-weight="900" font-size="34" letter-spacing="4">BAJAJ</text>
+  </g>
+</svg>

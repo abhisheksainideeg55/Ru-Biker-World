@@ -1,0 +1,53 @@
+import api from './api';
+
+export const notificationService = {
+  /**
+   * Fetch customer notifications
+   */
+  getNotifications: async (params = {}) => {
+    const response = await api.get('/notifications', { params });
+    return response.data;
+  },
+
+  /**
+   * Get live unread notification count
+   */
+  getUnreadCount: async () => {
+    const response = await api.get('/notifications/unread-count');
+    return response.data;
+  },
+
+  /**
+   * Mark single notification as read
+   */
+  markAsRead: async (id) => {
+    const response = await api.patch(`/notifications/${id}/read`);
+    return response.data;
+  },
+
+  /**
+   * Mark all notifications as read
+   */
+  markAllAsRead: async () => {
+    const response = await api.patch('/notifications/read-all');
+    return response.data;
+  },
+
+  /**
+   * Delete a notification
+   */
+  deleteNotification: async (id) => {
+    const response = await api.delete(`/notifications/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Clear all notifications
+   */
+  clearNotifications: async () => {
+    const response = await api.delete('/notifications');
+    return response.data;
+  },
+};
+
+export default notificationService;

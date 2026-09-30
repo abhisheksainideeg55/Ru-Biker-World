@@ -1,0 +1,780 @@
+import dns from 'dns';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {}
+
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+import Product from './models/Product.js';
+
+const productsToAdd = [
+  // 1. SIMTAC
+  {
+    name: 'Simtac High-Output Plug & Play Hazard Flasher Module (60 Patterns) for Royal Enfield / KTM / Yamaha',
+    brand: 'Simtac',
+    category: 'Lights & Electronics',
+    subcategory: 'Hazard Flashers',
+    price: 1499,
+    originalPrice: 1999,
+    discount: 25,
+    stock: true,
+    stockCount: 30,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80'
+    ],
+    bikeBrands: ['Royal Enfield', 'KTM', 'Yamaha', 'Bajaj', 'Honda', 'TVS'],
+    bikeModels: ['Classic 350', 'Hunter 350', 'Duke 390', 'MT-15', 'Dominar 400', 'Apache RTR 200'],
+    description: 'Simtac Plug & Play 60 Patterns Hazard Module designed for instant OEM indicator synchronization without wire-cutting. Waterproof sealed PCB with automated turn signal override.',
+    shortDescription: '60 flash patterns, waterproof design, auto-cancel turn indicator override.',
+    featured: true,
+    rating: 4.9,
+    reviewCount: 42,
+  },
+  {
+    name: 'Simtac LED Matrix Indicator Set with Sequential Flow Effect (Set of 4)',
+    brand: 'Simtac',
+    category: 'Lights & Electronics',
+    subcategory: 'LED Indicators',
+    price: 1199,
+    originalPrice: 1699,
+    discount: 29,
+    stock: true,
+    stockCount: 25,
+    image: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield', 'KTM', 'Yamaha', 'BMW', 'Bajaj'],
+    bikeModels: ['Himalayan 450', 'Duke 250', 'R15 V4', 'G310GS'],
+    description: 'Ultra-bright SMD LED sequential flowing indicators with flexible rubber stem to absorb vibrations and shocks.',
+    shortDescription: 'Sequential flow dynamic LED blinkers with anti-break rubber stem.',
+    featured: false,
+    rating: 4.8,
+    reviewCount: 19,
+  },
+
+  // 2. PHILOMEX
+  {
+    name: 'Philomex 360° Rotating Waterproof Smartphone Mount with Anti-Theft Lock & Vibration Damper',
+    brand: 'Philomex',
+    category: 'Accessories & Touring',
+    subcategory: 'Mobile Mounts & USB Fast Chargers',
+    price: 899,
+    originalPrice: 1499,
+    discount: 40,
+    stock: true,
+    stockCount: 40,
+    image: 'https://res.cloudinary.com/yxbjd9dw/image/upload/v1790673567/ru_biker_world/products/v2ejuf0emc9mig2a7ld2.webp',
+    images: [
+      'https://res.cloudinary.com/yxbjd9dw/image/upload/v1790673567/ru_biker_world/products/v2ejuf0emc9mig2a7ld2.webp',
+      'https://res.cloudinary.com/yxbjd9dw/image/upload/v1790673566/ru_biker_world/products/vi1e8ajzc028r6ytkyy1.webp'
+    ],
+    bikeBrands: ['Royal Enfield', 'KTM', 'Yamaha', 'BMW', 'Honda', 'TVS', 'Hero', 'Suzuki'],
+    bikeModels: ['Hunter 350', 'Meteor 350', 'Classic 350', 'Duke 390', 'R15 V4', 'Himalayan 450'],
+    description: 'High-strength composite smartphone mount with 4-corner silicone cushion damping and security lock key.',
+    shortDescription: 'Anti-vibration protection with secure one-touch lock mechanism.',
+    featured: true,
+    rating: 5.0,
+    reviewCount: 64,
+  },
+  {
+    name: 'Philomex Dual Quick Charge 3.0 Waterproof USB Fast Charger with Digital Voltmeter',
+    brand: 'Philomex',
+    category: 'Accessories & Touring',
+    subcategory: 'Mobile Mounts & USB Fast Chargers',
+    price: 649,
+    originalPrice: 1099,
+    discount: 41,
+    stock: true,
+    stockCount: 35,
+    image: 'https://res.cloudinary.com/yxbjd9dw/image/upload/v1790671877/ru_biker_world/products/eumxmnjb1odnopqhi8cb.webp',
+    images: ['https://res.cloudinary.com/yxbjd9dw/image/upload/v1790671877/ru_biker_world/products/eumxmnjb1odnopqhi8cb.webp'],
+    bikeBrands: ['Royal Enfield', 'KTM', 'Yamaha', 'BMW', 'Bajaj', 'TVS'],
+    bikeModels: ['Himalayan', 'Interceptor 650', 'Duke 390', 'Apache 310'],
+    description: 'Handlebar mount dual QC 3.0 fast charging module with real-time battery voltage digital monitor.',
+    shortDescription: 'Dual QC 3.0 USB fast charger with live voltage readout display.',
+    featured: false,
+    rating: 4.9,
+    reviewCount: 28,
+  },
+
+  // 3. N-GAGE
+  {
+    name: 'N-Gage Performance High-Flow Cotton Air Filter for Royal Enfield Interceptor 650 / Continental GT 650',
+    brand: 'N-Gage',
+    category: 'Performance Parts',
+    subcategory: 'Air Filters',
+    price: 2899,
+    originalPrice: 3499,
+    discount: 17,
+    stock: true,
+    stockCount: 18,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield'],
+    bikeModels: ['Interceptor 650', 'Continental GT 650', 'Super Meteor 650', 'Shotgun 650'],
+    description: 'Engineered multi-layer cotton gauze filtration for 30% enhanced air intake flow, optimized throttle response, and washable life-long usage.',
+    shortDescription: 'Washable high-flow performance air filter for RE 650 Twins.',
+    featured: true,
+    rating: 4.9,
+    reviewCount: 31,
+  },
+  {
+    name: 'N-Gage Racing High-Energy Spark Plug Wire & Ignition Booster Kit',
+    brand: 'N-Gage',
+    category: 'Performance Parts',
+    subcategory: 'Ignition Systems',
+    price: 1799,
+    originalPrice: 2299,
+    discount: 22,
+    stock: true,
+    stockCount: 20,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['KTM', 'Bajaj', 'Yamaha', 'Royal Enfield'],
+    bikeModels: ['Duke 390', 'Dominar 400', 'R15 V3', 'Classic 350'],
+    description: 'Low-resistance silicone ignition cable kit delivering maximum spark energy for crisper acceleration and cleaner combustion.',
+    shortDescription: 'Zero-loss ignition booster cable for optimized fuel burn.',
+    featured: false,
+    rating: 4.7,
+    reviewCount: 14,
+  },
+
+  // 4. ROLON
+  {
+    name: 'Rolon Premium Brass O-Ring Chain & Sprocket Kit for Royal Enfield Hunter 350 / Classic 350 Reborn',
+    brand: 'Rolon',
+    category: 'Spare Parts',
+    subcategory: 'Chain & Sprockets',
+    price: 2550,
+    originalPrice: 3100,
+    discount: 18,
+    stock: true,
+    stockCount: 24,
+    image: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield'],
+    bikeModels: ['Hunter 350', 'Classic 350 Reborn', 'Meteor 350', 'Bullet 350 (2023+)'],
+    description: 'Heavy duty golden brass coated links with precision nitrile O-rings for 2x extended service life and smooth silent drivetrain transfer.',
+    shortDescription: '#1 OEM Gold Brass O-Ring Chain & Sprocket Kit for RE J-Series 350.',
+    featured: true,
+    rating: 5.0,
+    reviewCount: 88,
+  },
+  {
+    name: 'Rolon Gold Series X-Ring Chain & Sprocket Kit for KTM Duke 390 / RC 390 / Adventure 390',
+    brand: 'Rolon',
+    category: 'Spare Parts',
+    subcategory: 'Chain & Sprockets',
+    price: 3450,
+    originalPrice: 4200,
+    discount: 18,
+    stock: true,
+    stockCount: 18,
+    image: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['KTM', 'Bajaj'],
+    bikeModels: ['Duke 390', 'RC 390', 'Adventure 390', 'Dominar 400'],
+    description: 'High-tensile heat treated alloy steel sprocket with X-Ring low friction chain engineered for high RPM torque.',
+    shortDescription: 'Race-spec X-Ring chain kit for KTM 390 / Dominar 400.',
+    featured: false,
+    rating: 4.9,
+    reviewCount: 52,
+  },
+
+  // 5. SIMI RACING
+  {
+    name: 'Simi Racing Stainless Steel High Performance Slip-On Exhaust for KTM Duke 200 / 250 / 390',
+    brand: 'Simi Racing',
+    category: 'Performance Parts',
+    subcategory: 'Performance Exhausts',
+    price: 6999,
+    originalPrice: 9500,
+    discount: 26,
+    stock: true,
+    stockCount: 10,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['KTM'],
+    bikeModels: ['Duke 200', 'Duke 250', 'Duke 390', 'RC 200', 'RC 390'],
+    description: 'TIG welded 304 Grade Stainless Steel sport exhaust with removable DB-killer baffle for deep bass exhaust note and weight savings.',
+    shortDescription: '304 Grade Stainless Steel slip-on exhaust with deep bass note.',
+    featured: true,
+    rating: 4.8,
+    reviewCount: 22,
+  },
+
+  // 6. HJG
+  {
+    name: 'HJG 60W Cree Dual Yellow & White Projector Auxiliary Fog Lights (Pair) with Wiring Harness',
+    brand: 'HJG',
+    category: 'Lights & Electronics',
+    subcategory: 'LED Auxiliary Lights',
+    price: 2899,
+    originalPrice: 4200,
+    discount: 31,
+    stock: true,
+    stockCount: 35,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield', 'KTM', 'BMW', 'Yamaha', 'Honda', 'TVS'],
+    bikeModels: ['Himalayan 450', 'Interceptor 650', 'G310GS', 'Transalp 750', 'Tiger 900'],
+    description: 'Heavy duty IP68 waterproof aviation aluminum housing with genuine Cree LED chips. Dual beam: 3000K Amber Fog + 6000K Pure White High beam.',
+    shortDescription: '60W Dual Color Cree LED projector fog lights with harness kit.',
+    featured: true,
+    rating: 5.0,
+    reviewCount: 95,
+  },
+  {
+    name: 'HJG Mini Driving Fog Light 40W Dual Color Projector Lens for All Motorcycles',
+    brand: 'HJG',
+    category: 'Lights & Electronics',
+    subcategory: 'LED Auxiliary Lights',
+    price: 1299,
+    originalPrice: 2100,
+    discount: 38,
+    stock: true,
+    stockCount: 45,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield', 'KTM', 'Yamaha', 'Honda', 'Bajaj', 'Hero', 'Suzuki', 'TVS'],
+    bikeModels: ['Hunter 350', 'Classic 350', 'MT-15', 'Pulsar N250', 'Raider 125'],
+    description: 'Compact micro projector fog lamps offering extreme light penetration in dense fog, rainfall and highway darkness.',
+    shortDescription: 'Compact high-lumen 40W projector fog lights.',
+    featured: false,
+    rating: 4.9,
+    reviewCount: 71,
+  },
+
+  // 7. SILVER STALLION
+  {
+    name: 'Silver Stallion Heavy Duty Touring Saddle Stay with Removable Support for Himalayan 411 / 450',
+    brand: 'Silver Stallion',
+    category: 'Bike Protection',
+    subcategory: 'Saddle Stays & Top Racks',
+    price: 2850,
+    originalPrice: 3800,
+    discount: 25,
+    stock: true,
+    stockCount: 15,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield'],
+    bikeModels: ['Himalayan 411', 'Scram 411', 'Himalayan 450'],
+    description: 'Precision CNC bent and powder coated mild steel luggage stay preventing soft luggage bags from contacting the exhaust silencer.',
+    shortDescription: 'Rugged powder-coated touring saddle stay for Royal Enfield Himalayan.',
+    featured: false,
+    rating: 4.8,
+    reviewCount: 18,
+  },
+
+  // 8. VESRAH
+  {
+    name: 'Vesrah Ceramic High Performance Front & Rear Brake Pads Combo for KTM 390 / Dominar 400',
+    brand: 'Vesrah',
+    category: 'Spare Parts',
+    subcategory: 'Brake System',
+    price: 1899,
+    originalPrice: 2499,
+    discount: 24,
+    stock: true,
+    stockCount: 35,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['KTM', 'Bajaj'],
+    bikeModels: ['Duke 390', 'RC 390', 'Adventure 390', 'Dominar 400', 'Duke 250'],
+    description: 'Made in Japan ceramic-composite high friction brake pads providing outstanding stopping power with zero brake rotor disc scoring.',
+    shortDescription: 'Japanese high-bite ceramic brake pads (Front + Rear combo).',
+    featured: true,
+    rating: 5.0,
+    reviewCount: 67,
+  },
+  {
+    name: 'Vesrah Sintered Metallic High-Bite Front Brake Pads for Royal Enfield Interceptor 650 / GT 650',
+    brand: 'Vesrah',
+    category: 'Spare Parts',
+    subcategory: 'Brake System',
+    price: 1450,
+    originalPrice: 1850,
+    discount: 22,
+    stock: true,
+    stockCount: 28,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield'],
+    bikeModels: ['Interceptor 650', 'Continental GT 650', 'Super Meteor 650'],
+    description: 'High thermal stability sintered copper alloy friction pads for immediate initial bite and fade-free emergency braking on highway runs.',
+    shortDescription: 'Sintered metallic high-bite front brake pads for RE 650.',
+    featured: false,
+    rating: 4.9,
+    reviewCount: 39,
+  },
+
+  // 9. HITECH
+  {
+    name: 'Hitech Organic Disc Brake Pads for Bajaj Pulsar NS200 / RS200 (Front & Rear Set)',
+    brand: 'Hitech',
+    category: 'Spare Parts',
+    subcategory: 'Brake System',
+    price: 699,
+    originalPrice: 999,
+    discount: 30,
+    stock: true,
+    stockCount: 40,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Bajaj'],
+    bikeModels: ['Pulsar NS200', 'Pulsar RS200', 'Pulsar 220F', 'Pulsar N160'],
+    description: 'Smooth and progressive braking feel with low dust generation and quiet stopping performance in all weather conditions.',
+    shortDescription: 'Quiet and durable organic disc brake pads set for Pulsar series.',
+    featured: false,
+    rating: 4.7,
+    reviewCount: 25,
+  },
+
+  // 10. MOTO TORQUE
+  {
+    name: 'Moto Torque Crash Guard with Dual Replaceable Delrin Sliders for Royal Enfield Hunter 350',
+    brand: 'Moto Torque',
+    category: 'Bike Protection',
+    subcategory: 'Crash Guards',
+    price: 3899,
+    originalPrice: 4999,
+    discount: 22,
+    stock: true,
+    stockCount: 16,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield'],
+    bikeModels: ['Hunter 350', 'Meteor 350', 'Classic 350'],
+    description: 'Cold rolled seamless steel tube crash guard engineered to distribute impact force across chassis mount points during a fall.',
+    shortDescription: 'Heavy-duty crash bar with high-impact Delrin frame sliders.',
+    featured: true,
+    rating: 4.9,
+    reviewCount: 34,
+  },
+  {
+    name: 'Moto Torque Heavy Duty Aluminum Sump Guard / Bash Plate for KTM Adventure 390 / 250',
+    brand: 'Moto Torque',
+    category: 'Bike Protection',
+    subcategory: 'Bash Plates & Sump Guards',
+    price: 3299,
+    originalPrice: 4200,
+    discount: 21,
+    stock: true,
+    stockCount: 14,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['KTM'],
+    bikeModels: ['Adventure 390', 'Adventure 250'],
+    description: '4mm aviation grade laser-cut aluminum underbelly skid plate shielding crankcase and exhaust headers from flying trail rocks.',
+    shortDescription: '4mm aircraft aluminum engine bash plate for KTM Adventure.',
+    featured: false,
+    rating: 4.8,
+    reviewCount: 19,
+  },
+
+  // 11. MOTUL
+  {
+    name: 'Motul 7100 4T 10W50 100% Synthetic 1.5L Engine Oil with Ester Technology',
+    brand: 'Motul',
+    category: 'Lubricants & Fluids',
+    subcategory: 'Engine Oils',
+    price: 1499,
+    originalPrice: 1750,
+    discount: 14,
+    stock: true,
+    stockCount: 60,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['KTM', 'Royal Enfield', 'Bajaj', 'Yamaha', 'BMW'],
+    bikeModels: ['Duke 390', 'Dominar 400', 'Himalayan 450', 'Interceptor 650'],
+    description: '100% Synthetic 4-Stroke motorcycle lubricant with Ester formulation meeting API SN and JASO MA2 performance standards for clutch protection.',
+    shortDescription: 'Premium 100% synthetic engine oil with Ester Technology.',
+    featured: true,
+    rating: 5.0,
+    reviewCount: 142,
+  },
+  {
+    name: 'Motul Chain Clean (C1) 400ml & Chain Lube Road (C2) 400ml Combo Maintenance Care Pack',
+    brand: 'Motul',
+    category: 'Lubricants & Fluids',
+    subcategory: 'Chain Maintenance',
+    price: 1149,
+    originalPrice: 1350,
+    discount: 15,
+    stock: true,
+    stockCount: 50,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield', 'KTM', 'Yamaha', 'BMW', 'Honda', 'Bajaj', 'TVS'],
+    bikeModels: ['All Chain-Driven Motorcycles'],
+    description: 'Essential drivetrain maintenance pack: C1 degreaser effectively removes grime while C2 synthetic lubricant protects O/X/Z rings from friction.',
+    shortDescription: 'Complete C1 cleaner + C2 road lube maintenance pack.',
+    featured: true,
+    rating: 5.0,
+    reviewCount: 118,
+  },
+
+  // 12. 66BHP
+  {
+    name: '66bhp Nano Tech Ceramic Chain Wax (400ml) Long Lasting Non-Fling Formula',
+    brand: '66bhp',
+    category: 'Lubricants & Fluids',
+    subcategory: 'Chain Maintenance',
+    price: 649,
+    originalPrice: 849,
+    discount: 24,
+    stock: true,
+    stockCount: 35,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Royal Enfield', 'KTM', 'Yamaha', 'BMW', 'TVS'],
+    bikeModels: ['All Motorcycles'],
+    description: 'Dry ceramic wax coating forming a dry barrier that prevents road dust and grit adhesion while keeping wheels clean.',
+    shortDescription: 'Zero-fling dry ceramic motorcycle chain wax spray.',
+    featured: false,
+    rating: 4.8,
+    reviewCount: 31,
+  },
+
+  // 13. MOTOCARE
+  {
+    name: 'Motocare Stainless Steel Radiator Guard Grill for Yamaha MT-15 V2 / R15 V4',
+    brand: 'Motocare',
+    category: 'Bike Protection',
+    subcategory: 'Radiator Grills',
+    price: 999,
+    originalPrice: 1499,
+    discount: 33,
+    stock: true,
+    stockCount: 28,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Yamaha'],
+    bikeModels: ['MT-15 V2', 'R15 V4', 'R15M'],
+    description: 'CNC cut rust-proof 304 Stainless Steel radiator cover designed to guard delicate cooling fins without restricting airflow.',
+    shortDescription: 'Laser cut stainless steel radiator guard for Yamaha R15 / MT15.',
+    featured: false,
+    rating: 4.9,
+    reviewCount: 29,
+  },
+
+  // 14. STUDDS
+  {
+    name: 'Studds Drifter D1 Full Face Helmet with Dual Visor & Pinlock Ready Shield (Matt Black)',
+    brand: 'Studds',
+    category: 'Helmets',
+    subcategory: 'Full Face Helmets',
+    price: 2150,
+    originalPrice: 2599,
+    discount: 17,
+    stock: true,
+    stockCount: 25,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80'
+    ],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All Riders'],
+    description: 'Aerodynamic thermoplastic shell with regulated multi-point density EPS liner, inner sun visor, and quick-release chin strap.',
+    shortDescription: 'Aerodynamic dual visor full face helmet with hypoallergenic padding.',
+    featured: true,
+    rating: 4.9,
+    reviewCount: 77,
+  },
+  {
+    name: 'Studds Ninja Elite Super Flip Up Modular Helmet with Dynamic Air Ventilation',
+    brand: 'Studds',
+    category: 'Helmets',
+    subcategory: 'Flip Up Helmets',
+    price: 1850,
+    originalPrice: 2299,
+    discount: 20,
+    stock: true,
+    stockCount: 30,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All Riders'],
+    description: 'Convenient single-button flip-up chin bar mechanism with silicone coated anti-scratch visor and replaceable cheek pads.',
+    shortDescription: 'Single-button flip up modular helmet with washable comfort liner.',
+    featured: false,
+    rating: 4.8,
+    reviewCount: 45,
+  },
+
+  // 15. VEGA
+  {
+    name: 'Vega Bolt Bunny Glossy Black Red Full Face Helmet (ISI & DOT Certified)',
+    brand: 'Vega',
+    category: 'Helmets',
+    subcategory: 'Full Face Helmets',
+    price: 1999,
+    originalPrice: 2450,
+    discount: 18,
+    stock: true,
+    stockCount: 22,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All Riders'],
+    description: 'High impact ABS material shell with metallic quick release micrometric buckle and UV resistant optical polycarbonate visor.',
+    shortDescription: 'Graphic full face helmet with optical polycarbonate visor.',
+    featured: true,
+    rating: 4.9,
+    reviewCount: 58,
+  },
+
+  // 16. STEELBIRD
+  {
+    name: 'Steelbird SBA-7 7Wings Full Face Helmet with Dual Visor & Night Glow Finish',
+    brand: 'Steelbird',
+    category: 'Helmets',
+    subcategory: 'Full Face Helmets',
+    price: 2299,
+    originalPrice: 2799,
+    discount: 18,
+    stock: true,
+    stockCount: 24,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All Riders'],
+    description: 'Italian design high impact thermoplastic shell with air-booster ventilation technology and dual visors.',
+    shortDescription: 'Dual visor aerodynamic helmet with night glow decals.',
+    featured: true,
+    rating: 4.8,
+    reviewCount: 63,
+  },
+
+  // 17. AXOR
+  {
+    name: 'Axor Apex Venomous Dual Visor ECE & DOT Certified Full Face Helmet (Gloss Black Grey)',
+    brand: 'Axor',
+    category: 'Helmets',
+    subcategory: 'Full Face Helmets',
+    price: 4994,
+    originalPrice: 5794,
+    discount: 14,
+    stock: true,
+    stockCount: 16,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80'
+    ],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All Riders'],
+    description: 'Premium dual certified ECE R-22.05 & DOT homologated helmet with integrated spoiler, Pinlock 30 anti-fog system, and internal sun visor.',
+    shortDescription: 'ECE 22.05 & DOT certified sports aerodynamic full face helmet.',
+    featured: true,
+    rating: 5.0,
+    reviewCount: 92,
+  },
+
+  // 18. SMK
+  {
+    name: 'SMK Typhoon Solid GL200 Glossy Black Full Face Helmet (ECE 22.05 Certified)',
+    brand: 'SMK',
+    category: 'Helmets',
+    subcategory: 'Full Face Helmets',
+    price: 4350,
+    originalPrice: 4999,
+    discount: 13,
+    stock: true,
+    stockCount: 18,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All Riders'],
+    description: 'Engineered in Italy with energy absorbing multi-density EPS, wide scratch resistant visor with Pinlock ready mounts.',
+    shortDescription: 'Italian designed ECE certified aerodynamic helmet.',
+    featured: true,
+    rating: 4.9,
+    reviewCount: 48,
+  },
+
+  // 19. GRAND PITSTOP
+  {
+    name: 'Grand Pitstop Puncture Repair Kit with 15 Mushroom Plugs for Tubeless Tires',
+    brand: 'Grand Pitstop',
+    category: 'Accessories & Touring',
+    subcategory: 'Bike Essentials',
+    price: 1699,
+    originalPrice: 2199,
+    discount: 23,
+    stock: true,
+    stockCount: 40,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All Tubeless Tires'],
+    description: 'Patented mushroom plug puncture repair gun fixing punctures without removing the motorcycle wheel in under 5 minutes.',
+    shortDescription: 'Patented tubeless tire mushroom puncture repair kit.',
+    featured: true,
+    rating: 4.9,
+    reviewCount: 84,
+  },
+  {
+    name: 'Grand Pitstop Portable Compact Bike Roller Stand for Easy Chain Cleaning & Maintenance',
+    brand: 'Grand Pitstop',
+    category: 'Maintenance & Care',
+    subcategory: 'Bike Essentials',
+    price: 1499,
+    originalPrice: 1999,
+    discount: 25,
+    stock: true,
+    stockCount: 30,
+    image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All Motorcycles with Paddock or Side Stand'],
+    description: 'Pocket size aluminum wheel roller allowing smooth tire rotation for solo chain lubricating and rim washing.',
+    shortDescription: 'Portable aluminum tire roller stand for effortless chain maintenance.',
+    featured: false,
+    rating: 4.8,
+    reviewCount: 53,
+  },
+
+  // 20. MOTO GENIUS
+  {
+    name: 'Moto Genius Heavy Duty Handlebar Mount 15W Qi Wireless + Type-C Fast Charger Mobile Holder',
+    brand: 'Moto Genius',
+    category: 'Accessories & Touring',
+    subcategory: 'Mobile Mounts & USB Fast Chargers',
+    price: 1599,
+    originalPrice: 2299,
+    discount: 30,
+    stock: true,
+    stockCount: 30,
+    image: 'https://res.cloudinary.com/yxbjd9dw/image/upload/v1790673903/ru_biker_world/products/lgfczd0ezpqgxfemwawm.webp',
+    images: ['https://res.cloudinary.com/yxbjd9dw/image/upload/v1790673903/ru_biker_world/products/lgfczd0ezpqgxfemwawm.webp'],
+    bikeBrands: ['Royal Enfield', 'KTM', 'Yamaha', 'BMW', 'Honda', 'TVS'],
+    bikeModels: ['Universal Handlebar 22mm to 32mm'],
+    description: 'Weatherproof aluminum alloy phone holder with automatic Qi wireless fast charging induction + QC 3.0 Type-C port.',
+    shortDescription: '15W wireless + QC 3.0 USB fast charging waterproof phone mount.',
+    featured: true,
+    rating: 5.0,
+    reviewCount: 38,
+  },
+
+  // 21. AUTO BIRD
+  {
+    name: 'Auto Bird Ultra-Loud Dual Chrome Trumpet Electric Horns 12V 110dB (Pair)',
+    brand: 'Auto Bird',
+    category: 'Lights & Electronics',
+    subcategory: 'Electricals & Horns',
+    price: 799,
+    originalPrice: 1199,
+    discount: 33,
+    stock: true,
+    stockCount: 40,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All 12V Battery Bikes'],
+    description: 'Twin tone deep harmonic sound (510Hz High + 410Hz Low) commanding instant attention on congested highway roads.',
+    shortDescription: '110dB twin tone electric waterproof chrome horn pair.',
+    featured: false,
+    rating: 4.8,
+    reviewCount: 41,
+  },
+  {
+    name: 'Auto Bird Heavy Duty All-Weather Waterproof Motorcycle Cover with Heat Shielding',
+    brand: 'Auto Bird',
+    category: 'Accessories & Touring',
+    subcategory: 'Bike Covers',
+    price: 949,
+    originalPrice: 1399,
+    discount: 32,
+    stock: true,
+    stockCount: 35,
+    image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80',
+    images: ['https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'],
+    bikeBrands: ['Universal'],
+    bikeModels: ['All Cruiser, Sports & Adventure Bikes'],
+    description: '300D Oxford waterproof polyester fabric with heat-resistant lower panel preventing burn from hot exhaust silencers.',
+    shortDescription: 'Heavy duty all-weather UV & heat resistant motorcycle body cover.',
+    featured: false,
+    rating: 4.7,
+    reviewCount: 29,
+  }
+];
+
+const seedBrandProducts = async () => {
+  try {
+    const mongoUri = process.env.MONGO_URI;
+    if (!mongoUri) {
+      console.error('MONGO_URI is missing in backend/.env');
+      process.exit(1);
+    }
+
+    console.log('Connecting to MongoDB Atlas...');
+    await mongoose.connect(mongoUri);
+    console.log('MongoDB connected successfully!');
+
+    let insertedCount = 0;
+    let skippedCount = 0;
+
+    for (const prodData of productsToAdd) {
+      const slug = prodData.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+      const sku = `RU-${prodData.brand.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 4)}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      const exists = await Product.findOne({
+        $or: [{ slug }, { name: prodData.name }]
+      });
+
+      if (exists) {
+        console.log(`[SKIPPED] Already exists: ${prodData.name}`);
+        skippedCount++;
+        continue;
+      }
+
+      await Product.create({
+        ...prodData,
+        slug,
+        sku,
+        cost: Math.round(prodData.price * 0.65),
+        maxPurchaseQuantity: 5,
+        isActive: true,
+        imageType: prodData.category.toLowerCase().includes('helmet') ? 'helmet' : 'part',
+        shippingCharge: prodData.price > 999 ? 0 : 99,
+        isFreeShipping: prodData.price > 999,
+        weight: '1.2 kg',
+        dimensions: '30 x 20 x 15 cm',
+        shippingTier: 'standard',
+        salesCount: Math.floor(Math.random() * 40) + 10,
+        isNew: true,
+      });
+
+      console.log(`[INSERTED] (${prodData.brand}): ${prodData.name}`);
+      insertedCount++;
+    }
+
+    console.log(`\n========================================`);
+    console.log(`Total New Products Added: ${insertedCount}`);
+    console.log(`Total Products Skipped: ${skippedCount}`);
+    console.log(`========================================\n`);
+
+    process.exit(0);
+  } catch (error) {
+    console.error('Error seeding brand products:', error);
+    process.exit(1);
+  }
+};
+
+seedBrandProducts();

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="100%" height="100%">
+  <rect width="300" height="200" fill="#ffffff"/>
+  <g transform="translate(150, 75)">
+    <!-- Benelli Green Circular Crest with Lion and Stars -->
+    <circle cx="0" cy="0" r="46" fill="#1C3F32" stroke="#B89758" stroke-width="4"/>
+    <circle cx="0" cy="0" r="38" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <!-- Stars -->
+    <polygon points="0,-24 3,-16 11,-16 5,-10 7,-2 0,-7 -7,-2 -5,-10 -11,-16 -3,-16" fill="#B89758"/>
+    <polygon points="-20,-16 -18,-10 -11,-10 -16,-5 -14,2 -20,-2 -26,2 -24,-5 -29,-10 -22,-10" fill="#B89758"/>
+    <polygon points="20,-16 22,-10 29,-10 24,-5 26,2 20,-2 14,2 16,-5 11,-10 18,-10" fill="#B89758"/>
+    <!-- Lion Emblem silhouette -->
+    <path d="M-15 15 C-15 0 0 -5 15 5 C10 10 5 18 -15 15 Z" fill="#FFFFFF"/>
+    <path d="M-10 24 C-10 24 0 28 10 24" stroke="#B89758" stroke-width="3" stroke-linecap="round"/>
+    <!-- Benelli typography -->
+    <text x="0" y="80" text-anchor="middle" fill="#111111" font-family="'Arial Black', 'Helvetica', sans-serif" font-weight="900" font-size="28" letter-spacing="3">Benelli</text>
+  </g>
+</svg>
