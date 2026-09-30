@@ -1361,6 +1361,15 @@ export const adminService = {
         requestedAt: '2026-09-26T09:00:00.000Z',
       }
     ];
+
+    try {
+      const userStored = localStorage.getItem('rubiker_returns_requests_v1');
+      const userReturns = userStored ? JSON.parse(userStored) : [];
+      const combined = [...userReturns, ...defaultReturns.filter((dr) => !userReturns.some((ur) => ur._id === dr._id || ur.orderNumber === dr.orderNumber))];
+      return combined;
+    } catch {
+      return defaultReturns;
+    }
   },
 
   updateReturnStatus: async (id, payload) => {
@@ -1369,9 +1378,21 @@ export const adminService = {
       if (response.data && response.data.data) {
         return response.data.data;
       }
-    } catch (e) {
-      console.warn('API /admin/returns update failed, applying local update', e.message);
-    }
+    } catch (e) {}
+
+    try {
+      const userStored = localStorage.getItem('rubiker_returns_requests_v1');
+      if (userStored) {
+        const userReturns = JSON.parse(userStored);
+        const idx = userReturns.findIndex((r) => r._id === id || r.id === id);
+        if (idx !== -1) {
+          userReturns[idx] = { ...userReturns[idx], ...payload, updatedAt: new Date().toISOString() };
+          localStorage.setItem('rubiker_returns_requests_v1', JSON.stringify(userReturns));
+          return userReturns[idx];
+        }
+      }
+    } catch {}
+
     return { _id: id, ...payload, updatedAt: new Date().toISOString() };
   },
 };
