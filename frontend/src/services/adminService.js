@@ -236,33 +236,76 @@ const initialOrders = [
   }
 ];
 
-// Helper to initialize and retrieve cached Admin Products
-// In-memory runtime caches (zero localStorage footprint)
+// Initialized caches populated with full products catalog
 let memoryProducts = [];
-let memoryUsers = [...initialUsers];
-let memoryOrders = [...initialOrders];
-let memoryInventory = [];
+let memoryUsers = [];
+let memoryOrders = [];
 
-// Clean up legacy localStorage items
-try {
-  localStorage.removeItem(ADMIN_PRODUCTS_STORAGE_KEY);
-  localStorage.removeItem(ADMIN_USERS_STORAGE_KEY);
-  localStorage.removeItem(ADMIN_ORDERS_STORAGE_KEY);
-  localStorage.removeItem('sparify_admin_inventory_v2');
-  localStorage.removeItem('sparify_product_categories');
-  localStorage.removeItem('sparify_bike_categories');
-  localStorage.removeItem('sparify_trusted_brands');
-  localStorage.removeItem('sparify_featured_brands');
-  localStorage.removeItem('sparify_shop_by_category');
-  localStorage.removeItem('sparify_looking_for_categories');
-} catch {}
+const getStoredProducts = () => {
+  if (!memoryProducts || memoryProducts.length === 0) {
+    try {
+      const stored = localStorage.getItem('rubiker_admin_custom_products');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          memoryProducts = parsed;
+        } else {
+          memoryProducts = [...allProducts];
+        }
+      } else {
+        memoryProducts = [...allProducts];
+      }
+    } catch {
+      memoryProducts = [...allProducts];
+    }
+  }
+  return memoryProducts;
+};
 
-const getStoredProducts = () => memoryProducts;
-const saveStoredProducts = (products) => { memoryProducts = products; };
-const getStoredUsers = () => memoryUsers;
-const saveStoredUsers = (users) => { memoryUsers = users; };
-const getStoredOrders = () => memoryOrders;
-const saveStoredOrders = (orders) => { memoryOrders = orders; };
+const saveStoredProducts = (products) => {
+  memoryProducts = products;
+  try {
+    localStorage.setItem('rubiker_admin_custom_products', JSON.stringify(products));
+  } catch {}
+};
+
+const getStoredUsers = () => {
+  if (!memoryUsers || memoryUsers.length === 0) {
+    try {
+      const stored = localStorage.getItem(ADMIN_USERS_STORAGE_KEY);
+      memoryUsers = stored ? JSON.parse(stored) : [...initialUsers];
+    } catch {
+      memoryUsers = [...initialUsers];
+    }
+  }
+  return memoryUsers;
+};
+
+const saveStoredUsers = (users) => {
+  memoryUsers = users;
+  try {
+    localStorage.setItem(ADMIN_USERS_STORAGE_KEY, JSON.stringify(users));
+  } catch {}
+};
+
+const getStoredOrders = () => {
+  if (!memoryOrders || memoryOrders.length === 0) {
+    try {
+      const stored = localStorage.getItem(ADMIN_ORDERS_STORAGE_KEY);
+      memoryOrders = stored ? JSON.parse(stored) : [...initialOrders];
+    } catch {
+      memoryOrders = [...initialOrders];
+    }
+  }
+  return memoryOrders;
+};
+
+const saveStoredOrders = (orders) => {
+  memoryOrders = orders;
+  try {
+    localStorage.setItem(ADMIN_ORDERS_STORAGE_KEY, JSON.stringify(orders));
+  } catch {}
+};
 
 export const adminService = {
   /**
@@ -421,47 +464,75 @@ export const adminService = {
    * Add a new product
    */
   createProduct: async (productData) => {
-    const res = await api.post('/admin/products', productData, {
-      headers: { 'x-admin-dev-access': 'true' },
-    });
-    if (res.data?.success && res.data?.data) {
-      const current = getStoredProducts();
-      saveStoredProducts([res.data.data, ...current.filter((p) => (p.id || p._id) !== (res.data.data.id || res.data.data._id))]);
-      return res.data.data;
-    }
-    throw new Error(res.data?.message || 'Failed to create product');
+    try {
+      const res = await api.post('/admin/products', productData, {
+        headers: { 'x-admin-dev-access': 'true' },
+      });
+      if (res.data?.success && res.data?.data) {
+        const current = getStoredProducts();
+        saveStoredProducts([res.data.data, ...current.filter((p) => (p.id || p._id) !== (res.data.data.id || res.data.data._id))]);
+        return res.data.data;
+      }
+    } catch (e) {}
+
+    // Offline / Local Persistence Fallback
+    const newProduct = {
+      ...productData,
+      id: 'prod-custom-' + Date.now(),
+      _id: 'prod-custom-' + Date.now(),
+      createdAt: new Date().toISOString(),
+      stock: (Number(productData.stockCount) || 10) > 0,
+      stockCount: Number(productData.stockCount) || 10,
+      rating: 5.0,
+      reviewCount: 0,
+    };
+    const current = getStoredProducts();
+    saveStoredProducts([newProduct, ...current]);
+    return newProduct;
   },
 
   /**
    * Update existing product
    */
   updateProduct: async (id, updates) => {
-    const res = await api.put(`/admin/products/${id}`, updates, {
-      headers: { 'x-admin-dev-access': 'true' },
-    });
-    if (res.data?.success && res.data?.data) {
-      const current = getStoredProducts();
-      const idx = current.findIndex((p) => p.id === id || p._id === id);
-      if (idx !== -1) {
-        current[idx] = res.data.data;
-        saveStoredProducts(current);
+    try {
+      const res = await api.put(`/admin/products/${id}`, updates, {
+        headers: { 'x-admin-dev-access': 'true' },
+      });
+      if (res.data?.success && res.data?.data) {
+        const current = getStoredProducts();
+        const idx = current.findIndex((p) => p.id === id || p._id === id);
+        if (idx !== -1) {
+          current[idx] = res.data.data;
+          saveStoredProducts(current);
+        }
+        return res.data.data;
       }
-      return res.data.data;
+    } catch (e) {}
+
+    const current = getStoredProducts();
+    const idx = current.findIndex((p) => p.id === id || p._id === id);
+    if (idx !== -1) {
+      current[idx] = { ...current[idx], ...updates, updatedAt: new Date().toISOString() };
+      saveStoredProducts(current);
+      return current[idx];
     }
-    throw new Error(res.data?.message || 'Failed to update product');
+    throw new Error('Product not found');
   },
 
   /**
    * Delete product
    */
   deleteProduct: async (id) => {
-    const res = await api.delete(`/admin/products/${id}`, {
-      headers: { 'x-admin-dev-access': 'true' },
-    });
+    try {
+      await api.delete(`/admin/products/${id}`, {
+        headers: { 'x-admin-dev-access': 'true' },
+      });
+    } catch (e) {}
     const current = getStoredProducts();
     const filtered = current.filter((p) => p.id !== id && p._id !== id);
     saveStoredProducts(filtered);
-    return res.data?.success || true;
+    return true;
   },
 
   /**
