@@ -35,18 +35,33 @@ export const ProductDetailsPage = () => {
   } = useProduct(slug);
 
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState('Medium');
+  const [selectedSize, setSelectedSize] = useState('Medium (57-58 cm)');
+
+  const isHelmetOrGear = Boolean(
+    (product?.category && (product.category.toLowerCase().includes('helmet') || product.category.toLowerCase().includes('gear'))) ||
+    (product?.subcategory && (product.subcategory.toLowerCase().includes('helmet') || product.subcategory.toLowerCase().includes('gear') || product.subcategory.toLowerCase().includes('glove') || product.subcategory.toLowerCase().includes('jacket'))) ||
+    (product?.name && (product.name.toLowerCase().includes('helmet') || product.name.toLowerCase().includes('jacket') || product.name.toLowerCase().includes('gloves'))) ||
+    (product?.sizes && product.sizes.length > 0)
+  );
+
+  const availableSizes = (product?.sizes && product.sizes.length > 0)
+    ? product.sizes
+    : isHelmetOrGear
+      ? ['Small (55-56 cm)', 'Medium (57-58 cm)', 'Large (59-60 cm)', 'XL (61-62 cm)', 'XXL (63-64 cm)']
+      : null;
 
   // Reset quantity and size and scroll to top on slug change
   useEffect(() => {
     setQuantity(1);
     if (product?.sizes && product.sizes.length > 0) {
       setSelectedSize(product.sizes[0]);
+    } else if (isHelmetOrGear) {
+      setSelectedSize('Medium (57-58 cm)');
     } else {
       setSelectedSize('Medium');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [slug, product]);
+  }, [slug, product, isHelmetOrGear]);
 
   // Unified SEO & JSON-LD schema update
   useEffect(() => {
@@ -131,12 +146,13 @@ export const ProductDetailsPage = () => {
             {/* RU BIKER world Assured, Share & Pincode Delivery Check */}
             <ProductDeliveryCheck product={product} />
 
-            {/* Accessory Size Selector */}
-            {product.sizes && product.sizes.length > 0 && (
+            {/* Helmet & Accessory Size Selector */}
+            {availableSizes && availableSizes.length > 0 && (
               <ProductSizeSelector
-                sizes={product.sizes}
+                sizes={availableSizes}
                 selectedSize={selectedSize}
                 onSelectSize={setSelectedSize}
+                isHelmet={isHelmetOrGear}
               />
             )}
 

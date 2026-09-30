@@ -47,7 +47,17 @@ export const StickyMobilePurchaseBar = ({
     setIsAdding(false);
   };
 
-  const sizes = product.sizes || ['Medium', 'Large', 'Extra Large', 'Double Extra Large'];
+  const isHelmet = Boolean(
+    (product?.category && product.category.toLowerCase().includes('helmet')) ||
+    (product?.subcategory && product.subcategory.toLowerCase().includes('helmet')) ||
+    (product?.name && product.name.toLowerCase().includes('helmet'))
+  );
+
+  const defaultSizes = isHelmet
+    ? ['Small (55-56 cm)', 'Medium (57-58 cm)', 'Large (59-60 cm)', 'XL (61-62 cm)', 'XXL (63-64 cm)']
+    : ['Medium', 'Large', 'Extra Large', 'Double Extra Large'];
+
+  const sizes = (product.sizes && product.sizes.length > 0) ? product.sizes : (isHelmet ? defaultSizes : null);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 animate-slideUp shadow-2xl">
@@ -64,9 +74,9 @@ export const StickyMobilePurchaseBar = ({
             {product.name}
           </span>
           <div className="flex items-center gap-3 text-xs mt-0.5">
-            {product.sizes && product.sizes.length > 0 && (
+            {sizes && sizes.length > 0 && (
               <div className="flex items-center gap-1 text-slate-600">
-                <span>Accessory size:</span>
+                <span>{isHelmet ? 'Helmet size:' : 'Size:'}</span>
                 <select
                   value={selectedSize}
                   onChange={(e) => onSelectSize && onSelectSize(e.target.value)}

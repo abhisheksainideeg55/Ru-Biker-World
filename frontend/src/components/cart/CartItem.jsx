@@ -38,6 +38,14 @@ export const CartItem = ({ item, isCompact = false }) => {
     product.image ||
     'https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=300&auto=format&fit=crop&q=80';
 
+  const sizeLabel =
+    item.selectedVariant?.size ||
+    item.selectedVariant?.name ||
+    item.selectedVariant?.value ||
+    (typeof item.selectedVariant === 'string' ? item.selectedVariant : null) ||
+    item.size ||
+    null;
+
   if (isCompact) {
     return (
       <div className="flex items-start gap-3 py-3 border-b border-slate-100 last:border-b-0">
@@ -59,7 +67,14 @@ export const CartItem = ({ item, isCompact = false }) => {
           >
             {product.name}
           </Link>
-          <div className="text-[11px] text-slate-500 mt-0.5">{product.brand}</div>
+          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+            <span className="text-[11px] text-slate-500">{product.brand}</span>
+            {sizeLabel && (
+              <span className="text-[10px] font-bold text-slate-800 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
+                Size: {sizeLabel}
+              </span>
+            )}
+          </div>
           <div className="flex items-center justify-between mt-2">
             <QuantitySelector
               quantity={quantity}
@@ -119,6 +134,11 @@ export const CartItem = ({ item, isCompact = false }) => {
                       SKU: {product.sku}
                     </span>
                   )}
+                  {sizeLabel && (
+                    <span className="text-[11px] font-bold text-slate-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                      Size: {sizeLabel}
+                    </span>
+                  )}
                 </div>
 
                 <Link
@@ -127,12 +147,6 @@ export const CartItem = ({ item, isCompact = false }) => {
                 >
                   {product.name}
                 </Link>
-
-                {item.selectedVariant && (
-                  <div className="text-xs text-slate-500 mt-1">
-                    Variant: <span className="font-semibold text-slate-700">{item.selectedVariant.name || item.selectedVariant.value}</span>
-                  </div>
-                )}
               </div>
 
               {/* Unit & Total Price (Desktop View) */}

@@ -91,6 +91,13 @@ export const OrderReview = ({ onEditAddress, onEditShipping }) => {
             const prod = item.product || {};
             const unitPrice = item.priceAtAdd || prod.price || 0;
             const total = unitPrice * (item.quantity || 1);
+            const sizeLabel =
+              item.selectedVariant?.size ||
+              item.selectedVariant?.name ||
+              item.selectedVariant?.value ||
+              (typeof item.selectedVariant === 'string' ? item.selectedVariant : null) ||
+              item.size ||
+              null;
 
             return (
               <div key={item._id || item.productId || idx} className="p-3.5 flex items-center justify-between gap-3">
@@ -102,8 +109,15 @@ export const OrderReview = ({ onEditAddress, onEditShipping }) => {
                   />
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-slate-800 line-clamp-1">{prod.name}</div>
-                    <div className="text-[11px] text-slate-500">
-                      Qty: <span className="font-bold text-slate-700">{item.quantity}</span> × ₹{unitPrice.toLocaleString('en-IN')}
+                    <div className="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5 flex-wrap">
+                      <span>
+                        Qty: <span className="font-bold text-slate-700">{item.quantity}</span> × ₹{unitPrice.toLocaleString('en-IN')}
+                      </span>
+                      {sizeLabel && (
+                        <span className="font-bold text-slate-800 bg-amber-50 border border-amber-200 px-1.5 py-0.2 rounded text-[10px]">
+                          Size: {sizeLabel}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
