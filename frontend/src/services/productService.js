@@ -13,8 +13,13 @@ export const productService = {
    * Fetch filtered, sorted and paginated products from backend API
    */
   getProducts: async (options = {}) => {
+    const filters = options.filters || options || {};
+    const reqPage = options.page || filters.page || 1;
+    const reqLimit = options.limit || filters.limit || 10;
+    const sort = options.sort || filters.sort || 'featured';
+    const searchQuery = (options.search || filters.search || filters.q || '').trim().toLowerCase();
+
     try {
-      const filters = options.filters || options;
       const categoriesParam = Array.isArray(filters.categories)
         ? filters.categories.join(',')
         : filters.categories || filters.category || options.category || options.categories || '';
@@ -31,12 +36,9 @@ export const productService = {
         ? filters.bikeModels.join(',')
         : filters.bikeModels || filters.bikeModel || options.bikeModel || options.bikeModels || '';
 
-      const reqPage = options.page || filters.page || 1;
-      const reqLimit = options.limit || filters.limit || 10;
-
       const res = await api.get('/products', {
         params: {
-          search: options.search || filters.search || filters.q || '',
+          search: searchQuery,
           category: categoriesParam,
           categories: categoriesParam,
           subcategory: filters.subcategory || options.subcategory || '',
@@ -49,13 +51,13 @@ export const productService = {
           maxPrice: filters.maxPrice !== undefined ? filters.maxPrice : options.maxPrice,
           inStockOnly: filters.availability === 'in-stock' || filters.availability === 'inStock' || options.inStockOnly,
           featured: filters.featured !== undefined ? filters.featured : options.featured,
-          sort: options.sort || filters.sort || 'featured',
+          sort,
           page: reqPage,
           limit: reqLimit,
         },
       });
 
-      if (res.data && res.data.success) {
+      if (res.data && res.data.success && (res.data.products || res.data.data)) {
         const productList = res.data.products || res.data.data || [];
         const pagination = res.data.pagination || {};
         const total = pagination.total !== undefined ? pagination.total : productList.length;
@@ -79,7 +81,6 @@ export const productService = {
     // Fallback in-memory / cached products
     let list = [...getCachedAdminProducts()];
 
-    const searchQuery = (options.search || filters?.search || filters?.q || '').trim().toLowerCase();
     if (searchQuery) {
       list = list.filter((p) => {
         const titleMatch = p.name?.toLowerCase().includes(searchQuery);
@@ -101,10 +102,11 @@ export const productService = {
       });
     }
 
-    if (filters.categories && filters.categories.length > 0) {
-      const selectedCats = Array.isArray(filters.categories)
-        ? filters.categories.map((c) => normalizeSlug(c))
-        : [normalizeSlug(filters.categories)];
+    const catFilter = filters.categories || filters.category || options.category || options.categories;
+    if (catFilter && catFilter.length > 0) {
+      const selectedCats = Array.isArray(catFilter)
+        ? catFilter.map((c) => normalizeSlug(c))
+        : [normalizeSlug(catFilter)];
 
       list = list.filter((p) => {
         const prodCat = normalizeSlug(p.category);
@@ -206,19 +208,19 @@ export const productService = {
     }
 
     const totalCount = list.length;
-    const totalPages = Math.ceil(totalCount / limit) || 1;
-    const safePage = Math.min(Math.max(1, page), totalPages);
-    const startIndex = (safePage - 1) * limit;
-    const paginatedItems = list.slice(startIndex, startIndex + limit);
+    const totalPages = Math.ceil(totalCount / reqLimit) || 1;
+    const safePage = Math.min(Math.max(1, reqPage), totalPages);
+    const startIndex = (safePage - 1) * reqLimit;
+    const paginatedItems = list.slice(startIndex, startIndex + reqLimit);
 
     return {
       products: paginatedItems.map((p) => ({ ...p, id: p.id || p._id })),
       totalCount,
       totalPages,
       currentPage: safePage,
-      limit,
+      limit: reqLimit,
       startIndex: totalCount === 0 ? 0 : startIndex + 1,
-      endIndex: Math.min(startIndex + limit, totalCount),
+      endIndex: Math.min(startIndex + reqLimit, totalCount),
     };
   },
 
