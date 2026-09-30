@@ -5,10 +5,11 @@ import { FiChevronLeft, FiChevronRight, FiCheck } from 'react-icons/fi';
 import Container from '../common/Container';
 import { productService } from '../../services/productService';
 import { useCart } from '../../hooks/useCart';
+import { trendingHelmets } from '../../data/trendingHelmets';
 
 export const TrendingHelmetPicks = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(trendingHelmets || []);
+  const [loading, setLoading] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [addedItems, setAddedItems] = useState({});
@@ -53,7 +54,6 @@ export const TrendingHelmetPicks = () => {
     let isMounted = true;
     const loadHelmetsAndGear = async () => {
       try {
-        // Fetch products strictly belonging to 'Helmets & Gear' already added in MongoDB
         const res = await productService.getProducts({
           category: 'Helmets & Gear',
           limit: 50,
@@ -69,7 +69,6 @@ export const TrendingHelmetPicks = () => {
           'flip up helmets',
         ];
 
-        // Strict filter: only items with category 'Helmets & Gear' and helmet subcategories
         const dbHelmets = rawList.filter((p) => {
           const cat = (p.category || '').toLowerCase().trim();
           const sub = (p.subcategory || '').toLowerCase().trim();
@@ -91,12 +90,17 @@ export const TrendingHelmetPicks = () => {
         });
 
         if (isMounted && dbHelmets.length > 0) {
-          setProducts(dbHelmets);
+          // Merge db helmets with trendingHelmets preventing duplicates
+          const merged = [...dbHelmets];
+          trendingHelmets.forEach((th) => {
+            if (!merged.some((m) => m.slug === th.slug || m.id === th.id)) {
+              merged.push(th);
+            }
+          });
+          setProducts(merged);
         }
       } catch (e) {
-        console.warn('Failed to load Helmets & Gear products from MongoDB:', e);
-      } finally {
-        if (isMounted) setLoading(false);
+        console.warn('Fallback to trendingHelmets static catalog:', e);
       }
     };
 
@@ -105,10 +109,6 @@ export const TrendingHelmetPicks = () => {
       isMounted = false;
     };
   }, []);
-
-  if (!loading && products.length === 0) {
-    return null;
-  }
 
   return (
     <section className="py-8 sm:py-12 bg-white select-none border-b border-slate-100">

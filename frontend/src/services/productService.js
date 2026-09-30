@@ -1,8 +1,26 @@
 import api from './api';
 import { allProducts as fallbackProducts } from '../data/products';
+import { trendingHelmets } from '../data/trendingHelmets';
 
-// Helper to get fallback products in memory
-const getCachedAdminProducts = () => fallbackProducts || [];
+// Helper to get all combined products in memory
+const getCachedAdminProducts = () => {
+  const combined = [...(fallbackProducts || [])];
+  if (Array.isArray(trendingHelmets)) {
+    trendingHelmets.forEach((th) => {
+      if (!combined.some((p) => p.slug === th.slug || p.id === th.id)) {
+        combined.push({
+          ...th,
+          id: th.id || th._id,
+          category: th.category || 'Helmets & Gear',
+          subcategory: th.subcategory || 'Helmets',
+          stock: th.inStock !== false,
+          stockCount: 15,
+        });
+      }
+    });
+  }
+  return combined;
+};
 
 // Normalization helper for query matching (e.g. 'spare-parts' -> 'spare parts')
 const normalizeSlug = (str = '') =>
